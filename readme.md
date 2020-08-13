@@ -13,30 +13,30 @@
 系统需要引入的Python模块有：socketio、numpy、cv2、json、scipy.integrate
 ***
 
-###static文件夹
+### static文件夹
 系统静态页面的前端代码与资源，css为样式文件，js为引入的js文件，images为图片资源。
 
 其中controler.html为控制器页面，index.html为参数设置页面。
 
 mime.json为文件后缀名与对应标准响应格式的数据集，用于请求文件的响应（Static Server.js中）。
 
-###dynamic文件夹
+### dynamic文件夹
 系统动态页面的前端代码与资源，model.html为模型展示页面。
 
-###Pendulum.js
+### Pendulum.js
 node服务端
 
-###Calculator.py
+### Calculator.py
 Python计算端
 
-###Static Server.js
+### Static Server.js
 静态资源服务，处理静态资源的请求。（Pendulum.js中引入）
 ***
 
 ### 操作步骤
 1.使用cmd命令行（快捷键win+R，调出运行命令窗口，并输入CMD），进入主目录。
 
-![CMD命令行示例图](./readme_picture/1.jpg)
+![CMD命令行示例图](https://github.com/swordHi/Virtual-inverted-pendulum-experimental-system/raw/master/readme_picture/1.jpg)
 
 Tip：亦可使用Powershell工具，在主目录下的空白处使用shift+右键，选择在此处打开Powershell窗口，直接进入主目录。
 
