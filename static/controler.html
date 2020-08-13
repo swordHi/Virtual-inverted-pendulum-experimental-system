@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <title>控制器模拟</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="keywords" content=""/>
+  <style>
+    .left {
+      display: inline-block;
+      background-color: #fff;
+      width: 80px;
+      height: 40px;
+      border-radius: 20px;
+      line-height: 40px;
+      font-size: 22px;
+      float: left;
+    }
+
+    .right {
+      display: inline-block;
+      background-color: #fff;
+      width: 80px;
+      height: 40px;
+      border-radius: 20px;
+      line-height: 40px;
+      font-size: 22px;
+      float: right;
+    }
+
+    .cf {
+      font-size: 20px;
+      color: #fff;
+      vertical-align: middle;
+    }
+    .hk {
+      vertical-align: middle;
+    }
+
+    .range_num {
+      display: inline-block;
+      background-color: #00bcd4;
+      width: 32px;
+      height: 32px;
+      border-radius: 16px;
+      line-height: 32px;
+      font-size: 20px;
+      vertical-align: middle;
+    }
+    .range_fh {
+      -webkit-user-select: none;
+      cursor: pointer;
+      display: inline-block;
+      background-color: #ffc107;
+      width: 20px;
+      height: 20px;
+      border: 1px solid #000;
+      border-radius: 10px;
+      line-height: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      vertical-align: middle;
+    }
+
+    .w3l-sub input {
+      border-radius: 18px;
+      margin: 30px;
+    }
+
+    .bt {
+      float: left;
+      font-size: 18px;
+      color: #fff;
+      margin-left: 5px;
+      line-height: 40px;
+    }
+    .bx {
+      float: right;
+      font-size: 18px;
+      color: #fff;
+      margin-right: 5px;
+      line-height: 40px;
+    }
+
+  </style>
+
+  <script>
+    addEventListener("load", function () {
+      setTimeout(hideURLbar, 0);
+    }, false);
+
+    function hideURLbar() {
+      window.scrollTo(0, 1);
+    }
+  </script>
+  <script src="js/socket.io.js"></script>
+  <link href="css/style.css" rel='stylesheet' type='text/css' />
+	<link href="http://fonts.googleapis.com/css?family=Abhaya+Libre:400,500,600,700,800" rel="stylesheet">
+</head>
+
+<body>
+  <header>
+    <h1>滑动控制器</h1>
+  </header>
+  <div class="w3ls-contact">
+    <form action="#" method="post">
+      <div class="agile-field-txt">
+        <span class="left" id='left'></span>
+        <span class="bt">摆杆角度</span>
+        <span class="right" id='right'></span>
+        <span class="bx">倒立摆位置</span>
+      </div>
+      <div class="agile-field-txt">
+        <span class="range_fh" id="fh">+</span>
+        <span class="cf">控制力:</span>
+        <input type="range" class="hk" id="ct">
+        <span class="range_num" id="cs">0</span>
+      </div>  
+      <div class="w3ls-contact  w3l-sub">
+        <input type="button" value="启动" id='start'>
+        <input type="button" value="停止" id='stop'>
+      </div>
+  </div>
+  
+</body>
+<script>
+  // 滑块模块
+  var control = document.getElementById("ct");
+  var x;
+  control.max = 1000;//设置滑块的最大值
+  control.value = 0;//设置滑块的初始值
+  control.onchange = function(){
+        document.getElementById("cs").innerHTML = control.value;//control.value即为滑块位置对应的值
+  }
+
+
+  var socket = io('ws://localhost:3000');
+ 
+  socket.on('connect', function(){
+    console.log('connect');
+  }); 
+
+  var start = document.getElementById("start");
+  var stop = document.getElementById("stop");
+  var fh = document.getElementById("fh");
+  start.onclick = function(){
+    if(itv){
+          clearInterval(itv);
+          itv = null;
+      } 
+    var itv = setInterval(function(){
+      val = fh.innerHTML+control.value
+      socket.emit('control', {"ss":val});
+      socket.on('control', function(data){
+        theta = data.tdata[1]/Math.PI*180;
+        if(theta>180){
+          theta = 360-theta;
+        }
+        if(theta<-180){
+          theta = 360+theta;
+        }
+        s = -data.sdata[1]*3;
+        document.getElementById("left").innerHTML = theta.toFixed(2)+'°';
+        document.getElementById("right").innerHTML = s.toFixed(2);
+      });
+    },3000)//setInterval()为定时器函数，第二个参数为时间（单位:毫秒）
+  }
+  stop.onclick = function(){
+    clearInterval(itv);
+    itv = null;
+  }
+
+  fh.onclick = function(){
+    if(fh.innerHTML == '+'){
+      fh.innerHTML = '-';
+    }else{
+      fh.innerHTML = '+';
+    }
+    
+  }
+</script>
+</html>
